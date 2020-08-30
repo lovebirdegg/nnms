@@ -1,5 +1,5 @@
 
-const routes = [
+const constantRouterMap = [
   { path: '/', component: () => import('pages/login.vue') },
   {
     path: '/',
@@ -28,5 +28,4 @@ const routes = [
     component: () => import('pages/Error404.vue')
   }
 ]
-
-export default routes
+export default constantRouterMap

@@ -53,7 +53,7 @@
 <script type="text/javascript">
 </script>
 <script>
-// import { login, getInfo } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 
 export default {
     data() {
