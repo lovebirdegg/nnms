@@ -3,7 +3,7 @@ import router from '../router'
 // import { Notification, detailBox } from 'element-ui'
 // import store from '../store'
 import { getToken } from './auth'
-// import { Notify } from 'quasar'
+import { Notify } from 'quasar'
 
 // 创建axios实例
 console.log('process.env.API_HOST')
@@ -47,6 +47,10 @@ service.interceptors.response.use(
       //   title: '错误',
       //   message: response.detail
       // })
+      Notify.create({
+        message: 'Danger, Will Robinson! Danger!'
+      })
+
       return Promise.reject('error')
     } else {
       return response.data

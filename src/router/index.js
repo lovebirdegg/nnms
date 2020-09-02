@@ -6,14 +6,22 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 export const constantRouterMap = [
-  { path: '/', component: () => import('pages/login.vue') },
+  { path: '/login', component: () => import('pages/login.vue') },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '/index', component: () => import('pages/Index.vue') },
+      {
+        path: '/index',
+        name: '首页',
+        component: () => import('pages/Index.vue')
+      },
       // { path: '/dashboard', component: () => import('pages/dashboard.vue') },
-      { path: '/dashboard_v2', component: () => import('pages/dashboard_v2.vue') }
+      {
+        path: '/dashboard_v2',
+        name: '控制台',
+        component: () => import('pages/dashboard_v2.vue')
+      }
       // { path: '/dashboard_v3', component: () => import('pages/dashboard_v3.vue') },
       // { path: '/customer_management', component: () => import('pages/customer_management.vue') },
       // { path: '/change_request', component: () => import('pages/change_request.vue') },

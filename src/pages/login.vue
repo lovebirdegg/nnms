@@ -68,13 +68,13 @@ export default {
     methods:{
       handleLogin() {
         const user = {
-          username: 'admin',
-          password: 'admin123',
+          username: this.username,
+          password: this.password,
           // rememberMe: this.loginForm.rememberMe
           }
           this.$store.dispatch('Login', user).then(() => {
             // this.loading = false
-            this.$router.push({ path: this.redirect || '/Index' })
+            this.$router.push({ path: this.redirect || '/index' })
           }).catch(() => {
             // this.loading = false
           })

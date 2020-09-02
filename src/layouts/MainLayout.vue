@@ -24,7 +24,7 @@
         <!-- <a style="font-size: 25px;" class="float-right q-mr-sm" href="https://github.com/sponsors/mayank091193"
            target="_blank" title="Donate"><i class="fas fa-heart" style="color: #eb5daa"></i></a> -->
         <q-btn flat round dense icon="search" class="q-mr-xs"/>
-        <!-- <q-btn flat round dense icon="fas fa-sign-out-alt" to="/"/> -->
+        <q-btn flat round dense icon="search" @click="logout()"/>
       </q-toolbar>
     </q-header>
 
@@ -63,13 +63,11 @@
                 <q-item-section avatar>
                   <q-icon name="dashboard"/>
                 </q-item-section>
-
                 <q-item-section>
                   Dashboard v1
                 </q-item-section>
               </q-item>
-
-              <q-item active-class="tab-active" to="/dashboard_v2" exact class="q-ma-sm navigation-item" clickable
+              <q-item active-class="tab-active" to="/dashboard_v2"  class="q-ma-sm navigation-item" clickable
                       v-ripple>
                 <q-item-section avatar>
                   <q-icon name="dashboard"/>
@@ -79,109 +77,34 @@
                   Dashboard v2
                 </q-item-section>
               </q-item>
+              <div v-for="route in permission_routers" :key="route.id" :item="route">
+                <div v-if="!route.hidden&&route.children">
+                  <q-item  v-if="hasOneShowingChild(route.children,route) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!route.alwaysShow" class="q-ma-sm navigation-item" :to="resolvePath(onlyOneChild.path)" exact active-class="q-item-no-link-highlighting" >
+                    <q-item-section avatar>
+                      <q-icon name="date_range"/>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{route.name}}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-expansion-item
+                    v-else-if="route.meta"
+                    icon="menu_open"
+                    :label="route.name">
+                    <template v-for="child in route.children" >
+                      <q-item v-if="!child.hidden"   :to="resolvePath(child.path)" :key="child.id" :item="child" class="q-ml-xl" style="margin-left: 55px  !important;" active-class="tab-active">
+                        <q-item-section avatar v-if="!child.hidden">
+                          <q-icon name="date_range"/>
+                        </q-item-section>
+                        <q-item-section v-if="!child.hidden">
+                          <q-item-label>{{child.name}}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
 
-              <q-item active-class="tab-active" to="/dashboard_v3" exact class="q-ma-sm navigation-item" clickable
-                      v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="dashboard"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Dashboard v3
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/customer_management" class="q-ma-sm navigation-item" clickable
-                      v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="star"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Customer Management
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/change_request" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="send"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Change Request
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/sales_invoices" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="attach_money"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Sales Invoices
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/quotes" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="money"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Quotes
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/transactions" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="assignment"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Transactions
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/employee_salary_list" class="q-ma-sm navigation-item" clickable
-                      v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="list"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Employee Salary List
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/calendar" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="calendar_today"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Calendar
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/department" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="business"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Department
-                </q-item-section>
-              </q-item>
-
-              <q-item active-class="tab-active" to="/my_profile" class="q-ma-sm navigation-item" clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="drafts"/>
-                </q-item-section>
-
-                <q-item-section>
-                  My Profile
-                </q-item-section>
-              </q-item>
+                  </q-expansion-item>
+                </div>
+              </div>
             </q-list>
           </q-scroll-area>
         </div>
@@ -196,59 +119,85 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink.vue'
-
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+import { mapGetters } from 'vuex'
+import { isExternal } from '@/utils'
+import path from 'path'
 
 export default {
   name: 'MainLayout',
   // components: { EssentialLink },
+  props: {
+    basePath: {
+      type: String,
+      default: ''
+    },
+    filter: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'permission_routers',
+      'sidebar'
+    ]),
+    isCollapse () {
+      return !this.sidebar.opened
+    }
+  },
+  created () {
+    console.log(this.permission_routers)
+  },
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      onlyOneChild: null
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
+    },
+    hasOneShowingChild (children, parent) {
+      const showingChildren = children.filter(item => {
+        if (item.hidden) {
+          return false
+        } else {
+          // Temp set(will be used if only has one showing child)
+          this.onlyOneChild = item
+          return true
+        }
+      })
+
+      // When there is only one child router, the child router is displayed by default
+      if (showingChildren.length === 1) {
+        return true
+      }
+
+      // Show parent if there are no child router to display
+      if (showingChildren.length === 0) {
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
+        return true
+      }
+
+      return false
+    },
+    resolvePath (routePath) {
+      if (this.isExternalLink(routePath)) {
+        return routePath
+      }
+      console.log()
+      return path.resolve(this.basePath, routePath)
+    },
+    isExternalLink (routePath) {
+      return isExternal(routePath)
+    },
+    myFilterMethod (node, filter) {
+      const filt = filter.toLowerCase()
+      console.log(node)
+      return node.label && node.label.toLowerCase().indexOf(filt) > -1 && node.label.toLowerCase().indexOf('(*)') > -1
     }
   }
 }

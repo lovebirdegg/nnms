@@ -10,12 +10,12 @@ import { buildMenus } from '@/api/login'
 import { filterAsyncRouter } from '../store/modules/permission'
 
 // NProgress.configure({ showSpinner: false })// NProgress Configuration
-const whiteList = ['/index']// no redirect whitelist
+const whiteList = ['/login']// no redirect whitelist
 router.beforeEach((to, from, next) => {
   // NProgress.start() // start progress bar
   if (getToken()) {
     // 已登录且要跳转的页面是登录页
-    if (to.path === '/index') {
+    if (to.path === '/login') {
       next({ path: '/' })
       // NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
