@@ -34,19 +34,6 @@
       bordered
       content-class="bg-grey-1"
     >
-      <!-- <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list> -->
       <div class="full-height" :class="$q.dark.isActive?'drawer_dark':'drawer_normal'">
         <div style="height: calc(100% - 117px);padding:10px;">
           <q-toolbar>
@@ -58,13 +45,13 @@
           <hr/>
           <q-scroll-area style="height:100%;">
             <q-list padding>
-              <q-item active-class="tab-active" to="/dashboard" exact class="q-ma-sm navigation-item" clickable
+              <q-item active-class="tab-active" to="/dashboard_v3" exact class="q-ma-sm navigation-item" clickable
                       v-ripple>
                 <q-item-section avatar>
                   <q-icon name="dashboard"/>
                 </q-item-section>
                 <q-item-section>
-                  Dashboard v1
+                  Dashboard v3
                 </q-item-section>
               </q-item>
               <q-item active-class="tab-active" to="/dashboard_v2"  class="q-ma-sm navigation-item" clickable
@@ -77,22 +64,34 @@
                   Dashboard v2
                 </q-item-section>
               </q-item>
+              <q-item active-class="tab-active" to="/dashboard_v4"  class="q-ma-sm navigation-item" clickable
+                      v-ripple>
+                <q-item-section avatar>
+                  <q-icon name="dashboard"/>
+                </q-item-section>
+                <q-item-section>
+                  Dashboard v4
+                </q-item-section>
+              </q-item>
               <div v-for="route in permission_routers" :key="route.id" :item="route">
                 <div v-if="!route.hidden&&route.children">
-                  <q-item  v-if="hasOneShowingChild(route.children,route) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!route.alwaysShow" class="q-ma-sm navigation-item" :to="resolvePath(onlyOneChild.path)" exact active-class="q-item-no-link-highlighting" >
-                    <q-item-section avatar>
-                      <q-icon name="date_range"/>
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{route.name}}</q-item-label>
-                    </q-item-section>
-                  </q-item>
+                  <!-- <template v-if="hasOneShowingChild(route.children,route) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!route.alwaysShow" class="q-ma-sm navigation-item" :to="resolvePath(route.path,onlyOneChild.path)">
+                    <q-item  exact active-class="q-item-no-link-highlighting" :key="onlyOneChild.name">
+                      <q-item-section avatar>
+                        <q-icon name="date_range"/>
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{route.name}}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    </template> -->
                   <q-expansion-item
-                    v-else-if="route.meta"
+                    v-if="route.meta"
                     icon="menu_open"
-                    :label="route.name">
+                    :key="route.is"
+                    :label="route.meta.title">
                     <template v-for="child in route.children" >
-                      <q-item v-if="!child.hidden"   :to="resolvePath(child.path)" :key="child.id" :item="child" class="q-ml-xl" style="margin-left: 55px  !important;" active-class="tab-active">
+                      <q-item v-if="!child.hidden"  :to="resolvePath(route.path,child.path)" :key="child.id" :item="child" class="q-ml-xl" style="margin-left: 55px  !important;" active-class="tab-active">
                         <q-item-section avatar v-if="!child.hidden">
                           <q-icon name="date_range"/>
                         </q-item-section>
@@ -110,8 +109,8 @@
         </div>
       </div>
     </q-drawer>
-
     <q-page-container>
+      <tags-view/>
       <router-view />
     </q-page-container>
   </q-layout>
@@ -122,16 +121,13 @@
 import { mapGetters } from 'vuex'
 import { isExternal } from '@/utils'
 import path from 'path'
+import TagsView from './components/TagsView'
 
 export default {
   name: 'MainLayout',
-  // components: { EssentialLink },
+  components: { TagsView },
   props: {
     basePath: {
-      type: String,
-      default: ''
-    },
-    filter: {
       type: String,
       default: ''
     }
@@ -184,20 +180,14 @@ export default {
 
       return false
     },
-    resolvePath (routePath) {
+    resolvePath (basePath, routePath) {
       if (this.isExternalLink(routePath)) {
         return routePath
       }
-      console.log()
-      return path.resolve(this.basePath, routePath)
+      return path.resolve(basePath, routePath)
     },
     isExternalLink (routePath) {
       return isExternal(routePath)
-    },
-    myFilterMethod (node, filter) {
-      const filt = filter.toLowerCase()
-      console.log(node)
-      return node.label && node.label.toLowerCase().indexOf(filt) > -1 && node.label.toLowerCase().indexOf('(*)') > -1
     }
   }
 }

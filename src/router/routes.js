@@ -8,6 +8,7 @@ const constantRouterMap = [
       { path: '/index', component: () => import('pages/Index.vue') },
       // { path: '/dashboard', component: () => import('pages/dashboard.vue') },
       { path: '/dashboard_v2', component: () => import('pages/dashboard_v2.vue') }
+      { path: '/dashboard_v3', component: () => import('pages/dashboard_v3.vue') }
       // { path: '/dashboard_v3', component: () => import('pages/dashboard_v3.vue') },
       // { path: '/customer_management', component: () => import('pages/customer_management.vue') },
       // { path: '/change_request', component: () => import('pages/change_request.vue') },
