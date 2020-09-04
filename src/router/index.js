@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // import constantRouterMap from './routes'
+import MainLayout from '../layouts/MainLayout.vue'
 
 Vue.use(VueRouter)
 
@@ -9,7 +10,8 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('pages/login.vue') },
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: MainLayout,
+    // component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: '/index',

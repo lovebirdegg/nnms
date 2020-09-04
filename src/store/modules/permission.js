@@ -1,5 +1,5 @@
 import { constantRouterMap } from '@/router'
-import Layout from '@/layouts/MainLayout'
+import MainLayout from '@/layouts/MainLayout'
 
 const permission = {
   state: {
@@ -23,10 +23,11 @@ const permission = {
 export const filterAsyncRouter = (routers) => { // 遍历后台传来的路由字符串，转换为组件对象
   const accessedRouters = routers.filter(router => {
     if (router.component) {
-      if (router.component === 'MainLayout') { // Layout组件特殊处理
-        router.component = Layout
+      if (router.component === 'Layout') { // Layout组件特殊处理
+        router.component = MainLayout
       } else {
         const component = router.component
+        // console.log(router)
         router.component = loadView(component)
       }
     }
@@ -39,6 +40,7 @@ export const filterAsyncRouter = (routers) => { // 遍历后台传来的路由�
 }
 
 export const loadView = (view) => { // 路由懒加载
+ 
   return () => import(`@/pages/${view}`)
 }
 

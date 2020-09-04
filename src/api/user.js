@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function add(data) {
+export function add (data) {
   return request({
     url: 'api/users/',
     method: 'post',
@@ -8,14 +8,14 @@ export function add(data) {
   })
 }
 
-export function del(id) {
+export function del (id) {
   return request({
     url: 'api/users/' + id + '/',
     method: 'delete'
   })
 }
 
-export function edit(id, data) {
+export function edit (id, data) {
   return request({
     url: 'api/users/' + id + '/',
     method: 'put',
@@ -23,7 +23,7 @@ export function edit(id, data) {
   })
 }
 
-export function updatePasswd(id, data) {
+export function updatePasswd (id, data) {
   return request({
     url: 'api/users/' + id + '/change-passwd/',
     method: 'post',
@@ -31,7 +31,7 @@ export function updatePasswd(id, data) {
   })
 }
 
-export function getUserList(name) {
+export function getUserList (name) {
   if (name) {
     return request({
       url: 'api/user/list/?name=' + name,
@@ -44,4 +44,3 @@ export function getUserList(name) {
     })
   }
 }
-
