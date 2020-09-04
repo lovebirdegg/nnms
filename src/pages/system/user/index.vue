@@ -12,7 +12,13 @@
         :pagination.sync="pagination"
       >
         <template v-slot:top-right="props">
-          <eHeader :query="query" :roles="roles" :organizations="organizations" :props="props"  @exportTable="exportTable"/>
+          <eHeader
+            :query="query"
+            :roles="roles"
+            :organizations="organizations"
+            :props="props"
+            @init="init"
+            @exportTable="exportTable"/>
         </template>
       </q-table>
     </q-card>
@@ -124,6 +130,7 @@ export default {
       const sort = 'id'
       const query = this.query
       const value = query.value
+      console.log(query)
       const isActive = query.isActive
       this.params = { page: this.page, size: this.size, ordering: sort }
       if (isActive !== '' && isActive !== null) { this.params.isActive = isActive }

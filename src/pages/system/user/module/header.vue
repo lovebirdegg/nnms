@@ -88,39 +88,14 @@ export default {
     // 去查询
     toQuery () {
       console.log('toQuery')
-      console.log(this)
       this.$parent.$parent.$parent.$parent.page = 1
-      this.$parent.$parent.$parent.$parent.init()
+      this.$emit('init')
     },
     // 导出
     getOrgUserTree () {
       getOrganizationUserTree().then(res => {
         this.orgusers = res.detail
       })
-    },
-    download () {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '用户名', '邮箱', '头像地址', '状态', '注册日期', '最后修改密码日期']
-        const filterVal = ['id', 'username', 'email', 'avatar', 'is_active', 'createTime', 'lastPasswordResetTime']
-        const data = this.formatJson(filterVal, this.$parent.data)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    // 数据转换
-    formatJson (filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
-        if (j === 'is_active') {
-          return v[j] ? '启用' : '禁用'
-        } else {
-          return v[j]
-        }
-      }))
     },
     exportTable () {
       this.$emit('exportTable')
