@@ -17,7 +17,9 @@
             :roles="roles"
             :organizations="organizations"
             :props="props"
+            :listMode="mode"
             @init="init"
+            @changeMode="changeMode"
             @exportTable="exportTable"/>
         </template>
       </q-table>
@@ -196,6 +198,9 @@ export default {
           icon: 'warning'
         })
       }
+    },
+    changeMode () {
+      this.mode = this.mode === 'grid' ? 'list' : 'grid'
     }
   }
 }

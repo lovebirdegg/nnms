@@ -12,7 +12,7 @@
       dense
       :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
       @click="props.toggleFullscreen"
-      v-if="mode === 'list'"
+      v-if="listMode === 'list'"
     >
       <q-tooltip
         :disable="$q.platform.is.mobile"
@@ -25,15 +25,14 @@
       flat
       round
       dense
-      :icon="mode === 'grid' ? 'list' : 'grid_on'"
-      @click="mode = mode === 'grid' ? 'list' : 'grid';
-      separator = mode === 'grid' ? 'none' : 'horizontal'"
+      :icon="listMode === 'grid' ? 'list' : 'grid_on'"
+      @click="changeMode()"
       v-if="!props.inFullscreen"
     >
       <q-tooltip
         :disable="$q.platform.is.mobile"
         v-close-popup
-      >{{mode==='grid' ? 'List' : 'Grid'}}
+      >{{listMode==='grid' ? 'List' : 'Grid'}}
       </q-tooltip>
     </q-btn>
 
@@ -70,13 +69,17 @@ export default {
     query: {
       type: Object,
       required: true
+    },
+    listMode: {
+      type: String,
+      required: true
     }
   },
   data () {
     return {
       orgusers: [],
       downloadLoading: false,
-      mode: 'list',
+      mode1: this.listMode,
       enabledTypeOptions: [
         { key: 'true', display_name: '激活' },
         { key: 'false', display_name: '锁定' }
@@ -99,6 +102,9 @@ export default {
     },
     exportTable () {
       this.$emit('exportTable')
+    },
+    changeMode () {
+      this.$emit('changeMode')
     }
   }
 }
