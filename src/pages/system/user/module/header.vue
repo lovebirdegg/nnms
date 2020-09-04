@@ -1,6 +1,7 @@
 <template>
   <div class="row">
     <q-btn @click="$refs.form.dialog = true; getOrgUserTree()" outline color="primary" label="新增" class="q-mr-xs"/>
+    <eForm ref="form" :roles="roles" :organizations="organizations" :orgusers="orgusers" :is-add="true"/>
     <q-input outlined dense debounce="300" v-model="query.value" placeholder="输入关键字搜索1">
       <template v-slot:append>
         <q-btn flat round color="primary" icon="search" @click="toQuery()"/>
@@ -49,10 +50,10 @@
 <script>
 import checkPermission from '@/utils/permission' // 权限判断函数
 import { getOrganizationUserTree } from '@/api/organization'
-// import eForm from './form'
+import eForm from './form'
 // 查询条件
 export default {
-  // components: { eForm },
+  components: { eForm },
   props: {
     organizations: {
       type: Array,
