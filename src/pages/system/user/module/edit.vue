@@ -6,7 +6,6 @@
 </template>
 <script>
 import eForm from './form'
-import { getOrganizationUserTree } from '@/api/organization'
 export default {
   components: { eForm },
   props: {
@@ -61,9 +60,9 @@ export default {
         _this.roleIds.push(data.id)
       })
       _this.dialog = true
-      getOrganizationUserTree().then(res => {
-        this.orgusers = res.detail
-      })
+      // getOrganizationUserTree().then(res => {
+      //   this.orgusers = res.detail
+      // })
     }
   }
 }

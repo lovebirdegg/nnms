@@ -1,8 +1,7 @@
 <template>
   <div class="row">
-    <q-btn @click="$refs.form.dialog = true; getOrgUserTree()" outline color="primary" label="新增" class="q-mr-xs"/>
-    <eForm ref="form" :roles="roles" :organizations="organizations" :orgusers="orgusers" :is-add="true"/>
-    <q-input outlined dense debounce="300" v-model="query.value" placeholder="输入关键字搜索1">
+    <q-btn @click="toAdd()" outline color="primary" label="新增" class="q-mr-xs"/>
+    <q-input outlined dense debounce="300" v-model="query.value" placeholder="输入关键字搜索">
       <template v-slot:append>
         <q-btn flat round color="primary" icon="search" @click="toQuery()"/>
       </template>
@@ -49,20 +48,9 @@
 
 <script>
 import checkPermission from '@/utils/permission' // 权限判断函数
-import { getOrganizationUserTree } from '@/api/organization'
-import eForm from './form'
 // 查询条件
 export default {
-  components: { eForm },
   props: {
-    organizations: {
-      type: Array,
-      required: true
-    },
-    roles: {
-      type: Array,
-      required: true
-    },
     props: {
       type: Object,
       required: true
@@ -73,6 +61,10 @@ export default {
     },
     listMode: {
       type: String,
+      required: true
+    },
+    sup_this: {
+      type: Object,
       required: true
     }
   },
@@ -92,14 +84,14 @@ export default {
     // 去查询
     toQuery () {
       console.log('toQuery')
-      this.$parent.$parent.$parent.$parent.page = 1
-      this.$emit('init')
+      this.sup_this.page = 1
+      this.sup_this.init()
     },
-    // 导出
-    getOrgUserTree () {
-      getOrganizationUserTree().then(res => {
-        this.orgusers = res.detail
-      })
+    toAdd () {
+      // console.log('toAdd')
+      // this.sup_this.$refs.myForm.resetForm()
+      this.sup_this.$refs.myForm.isAdd = true
+      this.sup_this.$refs.myForm.dialog = true
     },
     exportTable () {
       this.$emit('exportTable')

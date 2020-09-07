@@ -9,30 +9,42 @@
       </q-card-section>
       <q-separator inset></q-separator>
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-form class="q-gutter-md" ref="myForm">
           <q-list>
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">用户名</q-item-label>
-                <q-input dense outlined v-model="form.username" label="用户名"/>
+                <q-input dense outlined
+                v-model="form.username"
+                label="用户名"
+                :error-message="getErroMsg('username')"
+                :error="$v.form.username.$invalid"/>
               </q-item-section>
             </q-item>
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">姓名</q-item-label>
-                <q-input dense outlined v-model="form.name" label="姓名"/>
+                <q-input dense outlined
+                v-model="form.name"
+                label="姓名"
+                :error-message="getErroMsg('name')"
+                :error="$v.form.name.$invalid"/>
               </q-item-section>
             </q-item>
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">邮箱</q-item-label>
-                <q-input dense outlined v-model="form.email" label="邮箱"/>
+                <q-input dense outlined v-model="form.email" label="邮箱"
+                :error-message="getErroMsg('email')"
+                :error="$v.form.email.$invalid"/>
               </q-item-section>
             </q-item>
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">手机</q-item-label>
-                <q-input dense outlined v-model="form.mobile" label="手机"/>
+                <q-input dense outlined v-model="form.mobile" label="手机"
+                :error-message="getErroMsg('mobile')"
+                :error="$v.form.mobile.$invalid"/>
               </q-item-section>
             </q-item>
             <q-item>
@@ -44,14 +56,16 @@
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">职位</q-item-label>
-                <q-input dense outlined v-model="form.position" label="手机"/>
+                <q-input dense outlined v-model="form.position" label="职位"/>
               </q-item-section>
             </q-item>
             <q-item>
               <q-item-section>
                 <q-item-label class="q-pb-xs">状态</q-item-label>
-                <q-radio v-model="form.is_active" val="true" label="激活" />
-                <q-radio v-model="form.is_active" val="false" label="锁定" />
+                <div class="q-gutter-sm">
+                  <q-radio v-model="form.is_active" val="true" label="激活" />
+                  <q-radio v-model="form.is_active" val="false" label="锁定" />
+                </div>
               </q-item-section>
             </q-item>
             <q-item>
@@ -70,8 +84,8 @@
         </q-form>
       </q-card-section>
       <q-card-actions align="right" class="text-teal">
+        <q-btn label="Reset" type="reset" color="primary" @click="resetForm" flat class="q-ml-sm" />
         <q-btn label="确认" type="submit" color="primary" @click="doSubmit"/>
-        <!-- <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button> -->
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -82,125 +96,162 @@ import { add, edit } from '@/api/user'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { isvalidPhone } from '@/utils/validate'
-var validPhone = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error('请输入手机号码'))
-  } else if (!isvalidPhone(value)) {
-    callback(new Error('请输入正确的11位手机号码'))
-  } else {
-    callback()
-  }
-}
+import { required, minLength, email, maxLength } from 'vuelidate/lib/validators'
+import { getOrganizationTree, getOrganizationUserTree } from '@/api/organization'
+
+import { getRoles } from '@/api/role'
+
+// var validPhone = (rule, value, callback) => {
+//   if (!value) {
+//     callback(new Error('请输入手机号码'))
+//   } else if (!isvalidPhone(value)) {
+//     callback(new Error('请输入正确的11位手机号码'))
+//   } else {
+//     callback()
+//   }
+// }
 export default {
   name: 'Form',
   components: { Treeselect },
   props: {
-    organizations: {
-      type: Array,
-      required: true
-    },
-    orgusers: {
-      type: Array,
-      required: true
-    },
-    roles: {
-      type: Array,
-      required: true
-    },
-    isAdd: {
-      type: Boolean,
-      required: true
-    },
     sup_this: {
       type: Object,
       default: null
     }
   },
+  created () {
+    this.getRoleALL()
+    this.getOrganizations()
+    this.getOrgUserTree()
+  },
   data () {
     return {
       dialog: false,
-      loading: false,
-      form: { username: '', name: '', mobile: '', department: null, superior: null, position: '', email: '', is_active: 'false', roles: [] },
-      roleIds: [],
-      rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        name: [
-          { required: true, message: '姓名不能为空', trigger: 'blur' }
-        ],
-        email: [
-          { message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-        ],
-        mobile: [
-          { trigger: 'blur', validator: validPhone }
-        ],
-        is_active: [
-          { required: true, message: '状态不能为空', trigger: 'blur' }
-        ]
+      isAdd: true,
+      organizations: [],
+      roles: [],
+      orgusers: [],
+      form: { username: '12346', name: '1234', mobile: '15689733554', department: null, superior: null, position: '', email: '', is_active: 'true', roles: [] },
+      roleIds: []
+    }
+  },
+  validations: {
+    form: {
+      username: {
+        required,
+        minLength: minLength(5),
+        maxLength: maxLength(20)
+      },
+      name: {
+        required,
+        minLength: minLength(2),
+        maxLength: maxLength(10)
+      },
+      email: {
+        required,
+        email
+      },
+      mobile: {
+        required,
+        isvalidPhone
       }
     }
   },
   methods: {
+    getErroMsg (field) {
+      if (field === 'username') {
+        if (!this.$v.form.username.required) return '请输入用户名'
+        if (!this.$v.form.username.minLength) return '入用户名不能小于5位'
+        if (!this.$v.form.username.maxLength) return '入用户名不能大于20位'
+      }
+      if (field === 'name') {
+        if (!this.$v.form.name.required) return '请输入姓名'
+        if (!this.$v.form.name.minLength) return '姓名不能小于2位'
+        if (!this.$v.form.name.maxLength) return '姓名不能大于10位'
+      }
+      if (field === 'email') {
+        if (!this.$v.form.email.required) return '请输入邮箱'
+        if (!this.$v.form.email.email) return '请输入正确的邮箱'
+      }
+      if (field === 'mobile') {
+        if (!this.$v.form.mobile.required) return '请输入手机号'
+        if (!this.$v.form.mobile.isvalidPhone) return '请输入正确的11位手机号码'
+      }
+    },
     cancel () {
-      this.resetForm()
+      this.$refs.myForm.resetValidation()
     },
     doSubmit () {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.form.roles = []
-          const _this = this
-          this.roleIds.forEach(function (data, index) {
-            _this.form.roles.push(data)
-          })
-          if (this.isAdd) {
-            this.doAdd()
-          } else this.doEdit()
-        } else {
-          return false
-        }
-      })
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        return false
+      } else {
+        this.$q.loadingBar.start()
+        this.form.roles = []
+        const _this = this
+        this.roleIds.forEach(function (data, index) {
+          _this.form.roles.push(data)
+        })
+        if (this.isAdd) {
+          this.doAdd()
+        } else this.doEdit()
+      }
     },
     doAdd () {
       add(this.form).then(res => {
         this.resetForm()
-        this.$message({
-          showClose: true,
-          type: 'success',
-          message: '添加成功!默认密码123456!',
-          duration: 2500
+        this.$q.notify({
+          message: '添加成功!默认密码123456!'
         })
-        this.loading = false
-        this.$parent.$parent.init()
+        this.dialog = false
+        this.$q.loadingBar.stop()
+        console.log(this)
+        this.$parent.$parent.$parent.$parent.$parent.init()
       }).catch(err => {
-        this.loading = false
+        this.$q.loadingBar.stop()
         console.log(err)
       })
     },
     doEdit () {
       edit(this.form.id, this.form).then(res => {
         this.resetForm()
-        this.$message({
-          showClose: true,
-          type: 'success',
-          message: '修改成功!',
-          duration: 2500
+        this.dialog = false
+        this.$q.notify({
+          message: '修改成功'
         })
-        this.loading = false
+        this.$q.loadingBar.stop()
         this.sup_this.init()
       }).catch(err => {
-        this.loading = false
+        this.$q.loadingBar.stop()
         console.log(err)
       })
     },
     resetForm () {
-      this.dialog = false
-      this.$refs.form.resetFields()
+      this.$q.loadingBar.stop()
+      this.$refs.myForm.resetValidation()
       this.roleIds = []
       this.form = { username: '', name: '', mobile: '', department: null, superior: null, position: '', email: '', is_active: 'false', roles: [] }
+    },
+    // 导出
+    getOrgUserTree () {
+      getOrganizationUserTree().then(res => {
+        this.orgusers = res.detail
+      })
+    },
+    getOrganizations () {
+      getOrganizationTree().then(res => {
+        console.log('getOrganizations')
+        console.log(res.detail)
+        this.organizations = res.detail
+      })
+    },
+    getRoleALL () {
+      getRoles().then(res => {
+        const newres = res.results.map(item => {
+          return { ...item, label: item.name }
+        })
+        this.roles = newres
+      })
     }
   }
 }

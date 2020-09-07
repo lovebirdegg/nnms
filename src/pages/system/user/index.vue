@@ -1,6 +1,7 @@
 <template>
-   <q-page class="q-pa-sm">
-     <q-card>
+  <q-page class="q-pa-sm">
+    <eForm ref="myForm" :isAdd="true"/>
+    <q-card>
       <q-table
         :title="this.$route.meta.title"
         :data="data"
@@ -9,15 +10,47 @@
         row-key="name"
         :grid="mode=='grid'"
         :filter="filter"
+        no-data-label="没有数据"
         :pagination.sync="pagination"
       >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="username" :props="props">{{ props.row.username }}</q-td>
+            <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+            <q-td key="mobile" :props="props">{{ props.row.mobile }}</q-td>
+            <q-td key="email" :props="props">{{ props.row.email }}</q-td>
+            <q-td key="deparment" :props="props">{{ props.row.deparment }}</q-td>
+            <q-td key="position" :props="props">{{ props.row.position }}</q-td>
+            <q-td key="is_active" :props="props">{{ props.row.is_active ? "激活" : "锁定" }}</q-td>
+            <q-td key="action" :props="props">
+              <q-btn color="primary" label="编辑"  @click="edit(props.row)" :disabled="props.row.id === 1"/>
+              <q-btn color="secondary" label="密码" :disabled="props.row.id === 1"/>
+              <q-btn color="red" label="删除" :disabled="props.row.id === 1">
+                <q-menu>
+                  <div class="row q-pa-md">
+                    确定删除本条数据吗？<br/>
+                    所有关联的数据将会被清除
+                  </div>
+                  <div class="row q-pa-md justify-end">
+                    <q-btn
+                      color="white"
+                      text-color="black"
+                      label="取消"
+                      push
+                      v-close-popup/>
+                    <q-btn color="primary" push label="确定" @click="subDelete(props.row.id)" v-close-popup/>
+                  </div>
+                </q-menu>
+              </q-btn>
+            </q-td>
+          </q-tr>
+        </template>
         <template v-slot:top-right="props">
           <eHeader
             :query="query"
-            :roles="roles"
-            :organizations="organizations"
             :props="props"
             :listMode="mode"
+            :sup_this="sup_this"
             @init="init"
             @changeMode="changeMode"
             @exportTable="exportTable"/>
@@ -31,12 +64,13 @@
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
 import { del } from '@/api/user'
-import { getRoles } from '@/api/role'
-import { getOrganizationTree } from '@/api/organization'
+// import { getOrganizationTree } from '@/api/organization'
 import { parseTime } from '@/utils/index'
 import { exportFile } from 'quasar'
 
 import eHeader from './module/header'
+import eForm from './module/form'
+
 // import edit from './module/edit'
 // import updatePass from './module/updatePass'
 
@@ -51,7 +85,7 @@ function wrapCsvValue (val, formatFn) {
   return `"${formatted}"`
 }
 export default {
-  components: { eHeader },
+  components: { eHeader, eForm },
   mixins: [initData],
   data () {
     return {
@@ -62,6 +96,7 @@ export default {
       categorys: [],
       current_category: '',
       filter: '',
+      showing: false,
       mode: 'list',
       columns: [
         {
@@ -113,13 +148,17 @@ export default {
           label: '状态',
           field: 'is_active',
           sortable: true
+        },
+        {
+          name: 'action',
+          align: 'left',
+          field: row => row.id,
+          label: '操作'
         }
       ]
     }
   },
   created () {
-    this.getRoleALL()
-    this.getOrganizations()
     this.$nextTick(() => {
       this.init()
     })
@@ -140,35 +179,23 @@ export default {
       return true
     },
     subDelete (id) {
-      this.delLoading = true
+      this.$q.loadingBar.start()
       del(id).then(res => {
-        this.delLoading = false
-        this.$refs[id].doClose()
+        this.$q.loadingBar.stop()
         this.init()
-        this.$message({
-          showClose: true,
-          type: 'success',
-          message: '删除成功!',
-          duration: 2500
+        this.$q.notify({
+          message: '删除成功'
         })
       }).catch(err => {
-        this.delLoading = false
-        this.$refs[id].doClose()
+        this.$q.loadingBar.stop()
         console.log(err)
       })
     },
-    getOrganizations () {
-      getOrganizationTree().then(res => {
-        this.organizations = res.detail
-      })
-    },
-    getRoleALL () {
-      getRoles().then(res => {
-        const newres = res.results.map(item => {
-          return { ...item, label: item.name }
-        })
-        this.roles = newres
-      })
+    edit (row) {
+      // this.sup_this.$refs.myForm.resetForm()
+      this.$refs.myForm.isAdd = false
+      this.$refs.myForm.form = row
+      this.$refs.myForm.dialog = true
     },
     exportTable () {
       // naive encoding to csv format

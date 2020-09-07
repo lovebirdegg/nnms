@@ -22,7 +22,7 @@ export default {
         return
       }
       return new Promise((resolve, reject) => {
-        this.loading = true
+        this.$q.loadingBar.start()
         initData(this.url, this.params).then(res => {
           console.log('res')
           console.log(res)
@@ -30,11 +30,11 @@ export default {
           this.total = res.count
           this.data = res.results
           setTimeout(() => {
-            this.loading = false
+            this.$q.loadingBar.stop()
           }, this.time)
           resolve(res)
         }).catch(err => {
-          this.loading = false
+          this.$q.loadingBar.stop()
           reject(err)
         })
       })
