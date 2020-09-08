@@ -84,8 +84,11 @@ export default {
     // 去查询
     toQuery () {
       console.log('toQuery')
-      this.sup_this.page = 1
-      this.sup_this.init()
+      this.sup_this.pagination.page = 1
+      this.sup_this.init({
+        pagination: this.pagination,
+        filter: undefined
+      })
     },
     toAdd () {
       this.sup_this.$refs.form.resetForm()

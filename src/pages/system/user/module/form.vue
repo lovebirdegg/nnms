@@ -259,7 +259,8 @@ export default {
     },
     getRoleALL () {
       getRoles().then(res => {
-        const newres = res.results.map(item => {
+        console.log(res)
+        const newres = res.map(item => {
           return { ...item, label: item.name }
         })
         this.roles = newres

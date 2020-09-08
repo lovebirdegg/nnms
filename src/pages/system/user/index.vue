@@ -205,7 +205,7 @@ export default {
       let uid = null
       if (formData.superior !== null) {
         uid = formData.superior.id
-      } 
+      }
       formData.department = did
       formData.superior = uid
       formData.is_active = formData.is_active.toString()
@@ -214,7 +214,7 @@ export default {
       row.roles.forEach(function(data, index) {
         roleIds.push(data.id)
       })
-      delete formData.image //暂不处理图片
+      delete formData.image
       this.$refs.form.isAdd = false
       this.$refs.form.roleIds = roleIds
       this.$refs.form.formData = formData
