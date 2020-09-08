@@ -88,10 +88,9 @@ export default {
       this.sup_this.init()
     },
     toAdd () {
-      // console.log('toAdd')
-      // this.sup_this.$refs.myForm.resetForm()
-      this.sup_this.$refs.myForm.isAdd = true
-      this.sup_this.$refs.myForm.dialog = true
+      this.sup_this.$refs.form.resetForm()
+      this.sup_this.$refs.form.isAdd = true
+      this.sup_this.$refs.form.dialog = true
     },
     exportTable () {
       this.$emit('exportTable')

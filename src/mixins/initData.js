@@ -6,10 +6,12 @@ export default {
       loading: true,
       data: [],
       page: 1,
+      size: 10,
       pagination: {
-        rowsPerPage: 10
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0
       },
-      total: 0,
       url: '',
       params: {},
       query: {},
@@ -17,7 +19,12 @@ export default {
     }
   },
   methods: {
-    async init () {
+    async init (props) {
+      console.log('props')
+      console.log(props)
+      const { page, rowsPerPage } = props.pagination
+      this.page = page
+      this.size = rowsPerPage
       if (!await this.beforeInit()) {
         return
       }
@@ -26,8 +33,9 @@ export default {
         initData(this.url, this.params).then(res => {
           console.log('res')
           console.log(res)
-
-          this.total = res.count
+          this.pagination.rowsNumber = res.count
+          this.pagination.page = res.current
+          this.pagination.rowsPerPage = rowsPerPage
           this.data = res.results
           setTimeout(() => {
             this.$q.loadingBar.stop()

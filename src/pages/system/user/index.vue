@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <eForm ref="myForm" :isAdd="true"/>
+    <eForm ref="form" :isAdd="true" :sup_this="sup_this"/>
     <q-card>
       <q-table
         :title="this.$route.meta.title"
@@ -12,6 +12,7 @@
         :filter="filter"
         no-data-label="没有数据"
         :pagination.sync="pagination"
+        @request="init"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -19,7 +20,7 @@
             <q-td key="name" :props="props">{{ props.row.name }}</q-td>
             <q-td key="mobile" :props="props">{{ props.row.mobile }}</q-td>
             <q-td key="email" :props="props">{{ props.row.email }}</q-td>
-            <q-td key="deparment" :props="props">{{ props.row.deparment }}</q-td>
+            <q-td key="deparment" :props="props">{{ props.row.department!== null ? props.row.department.name : ''}}</q-td>
             <q-td key="position" :props="props">{{ props.row.position }}</q-td>
             <q-td key="is_active" :props="props">{{ props.row.is_active ? "激活" : "锁定" }}</q-td>
             <q-td key="action" :props="props">
@@ -160,7 +161,10 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      this.init()
+      this.init({
+        pagination: this.pagination,
+        filter: undefined
+      })
     })
   },
   methods: {
@@ -172,9 +176,9 @@ export default {
       const query = this.query
       const value = query.value
       console.log(query)
-      const isActive = query.isActive
+      const is_active = query.is_active
       this.params = { page: this.page, size: this.size, ordering: sort }
-      if (isActive !== '' && isActive !== null) { this.params.isActive = isActive }
+      if (is_active !== '' && is_active !== null) { this.params.is_active = is_active }
       if (value) { this.params.search = value }
       return true
     },
@@ -192,10 +196,29 @@ export default {
       })
     },
     edit (row) {
-      // this.sup_this.$refs.myForm.resetForm()
-      this.$refs.myForm.isAdd = false
-      this.$refs.myForm.form = row
-      this.$refs.myForm.dialog = true
+      this.$refs.form.resetForm()
+      const formData = JSON.parse(JSON.stringify(row))
+      let did = null
+      if (formData.department !== null) {
+        did = formData.department.id
+      }
+      let uid = null
+      if (formData.superior !== null) {
+        uid = formData.superior.id
+      } 
+      formData.department = did
+      formData.superior = uid
+      formData.is_active = formData.is_active.toString()
+
+      const roleIds = []
+      row.roles.forEach(function(data, index) {
+        roleIds.push(data.id)
+      })
+      delete formData.image //暂不处理图片
+      this.$refs.form.isAdd = false
+      this.$refs.form.roleIds = roleIds
+      this.$refs.form.formData = formData
+      this.$refs.form.dialog = true
     },
     exportTable () {
       // naive encoding to csv format
