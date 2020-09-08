@@ -43,12 +43,10 @@ service.interceptors.response.use(
   response => {
     const code = response.status
     if (code < 200 || code > 300) {
-      // Notification.error({
-      //   title: '错误',
-      //   message: response.detail
-      // })
       Notify.create({
-        message: 'Danger, Will Robinson! Danger!'
+        caption: '错误',
+        message: response.detail,
+        color: 'red'
       })
 
       return Promise.reject('error')
@@ -62,10 +60,11 @@ service.interceptors.response.use(
       code = error.response.data.status
     } catch (e) {
       if (error.toString().indexOf('timeout')) {
-        // Notification.error({
-        //   title: '错误',
-        //   message: '请求超时!'
-        // })
+        Notify.create({
+          caption: '错误',
+          message: '请求超时!',
+          color: 'red'
+        })
         return Promise.reject(error)
       }
     }
@@ -86,18 +85,20 @@ service.interceptors.response.use(
     } else if (code === 403) {
       router.push({ path: '/401' })
     } else if (code === 502) {
-      // Notification.error({
-      //   title: '错误',
-      //   message: '后端服务器连接失败!'
-      // })
+      Notify.create({
+        caption: '错误',
+        message: '后端服务器连接失败!',
+        color: 'red'
+      })
     } else {
       const errorMsg = error.response.data.detail
+      console.log(errorMsg)
       if (errorMsg !== undefined) {
-        // Notification.error({
-        //   title: '错误',
-        //   message: errorMsg,
-        //   duration: 2500
-        // })
+        Notify.create({
+          caption: '错误',
+          message: JSON.stringify(errorMsg),
+          color: 'red'
+        })
       }
     }
     return Promise.reject(error)

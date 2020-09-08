@@ -176,9 +176,9 @@ export default {
       const query = this.query
       const value = query.value
       console.log(query)
-      const is_active = query.is_active
+      const isActive = query.is_active
       this.params = { page: this.page, size: this.size, ordering: sort }
-      if (is_active !== '' && is_active !== null) { this.params.is_active = is_active }
+      if (isActive !== '' && isActive !== null) { this.params.is_active = isActive }
       if (value) { this.params.search = value }
       return true
     },
@@ -186,7 +186,10 @@ export default {
       this.$q.loadingBar.start()
       del(id).then(res => {
         this.$q.loadingBar.stop()
-        this.init()
+        this.init({
+          pagination: this.pagination,
+          filter: undefined
+        })
         this.$q.notify({
           message: '删除成功'
         })
@@ -211,7 +214,7 @@ export default {
       formData.is_active = formData.is_active.toString()
 
       const roleIds = []
-      row.roles.forEach(function(data, index) {
+      row.roles.forEach(function (data, index) {
         roleIds.push(data.id)
       })
       delete formData.image

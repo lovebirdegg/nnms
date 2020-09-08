@@ -33,10 +33,10 @@ export default {
         initData(this.url, this.params).then(res => {
           console.log('res')
           console.log(res)
-          this.pagination.rowsNumber = res.count
-          this.pagination.page = res.current
+          this.pagination.rowsNumber = res.detail.count
+          this.pagination.page = res.detail.current
           this.pagination.rowsPerPage = rowsPerPage
-          this.data = res.results
+          this.data = res.detail.results
           setTimeout(() => {
             this.$q.loadingBar.stop()
           }, this.time)

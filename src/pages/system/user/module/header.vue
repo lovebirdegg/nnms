@@ -86,7 +86,7 @@ export default {
       console.log('toQuery')
       this.sup_this.pagination.page = 1
       this.sup_this.init({
-        pagination: this.pagination,
+        pagination: this.sup_this.pagination,
         filter: undefined
       })
     },

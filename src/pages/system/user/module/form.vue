@@ -216,7 +216,10 @@ export default {
         this.dialog = false
         this.$q.loadingBar.stop()
         console.log(this)
-        this.sup_this.init()
+        this.sup_this.init({
+          pagination: this.sup_this.pagination,
+          filter: undefined
+        })
       }).catch(err => {
         this.$q.loadingBar.stop()
         console.log(err)
@@ -230,7 +233,10 @@ export default {
           message: '修改成功'
         })
         this.$q.loadingBar.stop()
-        this.sup_this.init()
+        this.sup_this.init({
+          pagination: this.sup_this.pagination,
+          filter: undefined
+        })
       }).catch(err => {
         this.$q.loadingBar.stop()
         console.log(err)
