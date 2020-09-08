@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <eForm ref="form" :isAdd="true" :sup_this="sup_this"/>
+    <updatePass ref="updatePass" :sup_this="sup_this"/>
     <q-card>
       <q-table
         :title="this.$route.meta.title"
@@ -22,10 +23,14 @@
             <q-td key="email" :props="props">{{ props.row.email }}</q-td>
             <q-td key="deparment" :props="props">{{ props.row.department!== null ? props.row.department.name : ''}}</q-td>
             <q-td key="position" :props="props">{{ props.row.position }}</q-td>
-            <q-td key="is_active" :props="props">{{ props.row.is_active ? "激活" : "锁定" }}</q-td>
+            <q-td key="is_active" :props="props">
+              <q-badge :color="props.row.is_active ? 'green' : 'red'">
+                {{ props.row.is_active ? "激活" : "锁定" }}
+              </q-badge>
+            </q-td>
             <q-td key="action" :props="props">
               <q-btn color="primary" label="编辑"  @click="edit(props.row)" :disabled="props.row.id === 1"/>
-              <q-btn color="secondary" label="密码" :disabled="props.row.id === 1"/>
+              <q-btn color="secondary" label="密码" @click="updatePassword(props.row)" :disabled="props.row.id === 1"/>
               <q-btn color="red" label="删除" :disabled="props.row.id === 1">
                 <q-menu>
                   <div class="row q-pa-md">
@@ -73,7 +78,7 @@ import eHeader from './module/header'
 import eForm from './module/form'
 
 // import edit from './module/edit'
-// import updatePass from './module/updatePass'
+import updatePass from './module/updatePass'
 
 function wrapCsvValue (val, formatFn) {
   let formatted = formatFn !== undefined ? formatFn(val) : val
@@ -86,7 +91,7 @@ function wrapCsvValue (val, formatFn) {
   return `"${formatted}"`
 }
 export default {
-  components: { eHeader, eForm },
+  components: { eHeader, eForm, updatePass },
   mixins: [initData],
   data () {
     return {
@@ -105,50 +110,43 @@ export default {
           required: true,
           label: '用户名',
           align: 'left',
-          field: 'username',
-          sortable: true
+          field: 'username'
         },
         {
           name: 'name',
           align: 'left',
           label: '姓名',
-          field: 'name',
-          sortable: true
+          field: 'name'
         },
         {
           name: 'mobile',
           align: 'left',
           label: '手机号',
-          field: 'mobile',
-          sortable: true
+          field: 'mobile'
         },
         {
           name: 'email',
           align: 'left',
           label: '邮箱',
-          field: 'email',
-          sortable: true
+          field: 'email'
         },
         {
           name: 'deparment',
           align: 'left',
           label: '部门',
-          field: 'deparment',
-          sortable: true
+          field: 'deparment'
         },
         {
           name: 'position',
           align: 'left',
           label: '职位',
-          field: 'position',
-          sortable: true
+          field: 'position'
         },
         {
           name: 'is_active',
           align: 'left',
           label: '状态',
-          field: 'is_active',
-          sortable: true
+          field: 'is_active'
         },
         {
           name: 'action',
@@ -222,6 +220,10 @@ export default {
       this.$refs.form.roleIds = roleIds
       this.$refs.form.formData = formData
       this.$refs.form.dialog = true
+    },
+    updatePassword (row) {
+      this.$refs.updatePass.id = row.id
+      this.$refs.updatePass.dialog = true
     },
     exportTable () {
       // naive encoding to csv format

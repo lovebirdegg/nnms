@@ -44,7 +44,7 @@ service.interceptors.response.use(
     const code = response.status
     if (code < 200 || code > 300) {
       Notify.create({
-        caption: '错误',
+        // caption: '错误',
         message: response.detail,
         color: 'red'
       })
@@ -61,7 +61,6 @@ service.interceptors.response.use(
     } catch (e) {
       if (error.toString().indexOf('timeout')) {
         Notify.create({
-          caption: '错误',
           message: '请求超时!',
           color: 'red'
         })
@@ -86,7 +85,6 @@ service.interceptors.response.use(
       router.push({ path: '/401' })
     } else if (code === 502) {
       Notify.create({
-        caption: '错误',
         message: '后端服务器连接失败!',
         color: 'red'
       })
@@ -95,7 +93,7 @@ service.interceptors.response.use(
       console.log(errorMsg)
       if (errorMsg !== undefined) {
         Notify.create({
-          caption: '错误',
+          // caption: '错误',
           message: JSON.stringify(errorMsg),
           color: 'red'
         })
