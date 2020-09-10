@@ -95,19 +95,19 @@ export default {
       } else {
         this.$q.loadingBar.start()
         updatePasswd(this.id, this.formData).then(res => {
-            this.resetForm()
-            this.$q.notify({
-              message: '修改密码成功!'
-            })
-            this.$q.loadingBar.stop()
-            // this.sup_this.init({
-            //   pagination: this.sup_this.pagination,
-            //   filter: undefined
-            // })
-          }).catch(err => {
-            this.$q.loadingBar.stop()
-            console.log(err)
+          this.resetForm()
+          this.$q.notify({
+            message: '修改密码成功!'
           })
+          this.$q.loadingBar.stop()
+          // this.sup_this.init({
+          //   pagination: this.sup_this.pagination,
+          //   filter: undefined
+          // })
+        }).catch(err => {
+          this.$q.loadingBar.stop()
+          console.log(err)
+        })
       }
     },
     resetForm () {
