@@ -87,13 +87,13 @@
                     </template> -->
                   <q-expansion-item
                     v-if="route.meta"
-                    icon="menu_open"
+                    :icon="route.meta.icon || 'menu_open'"
                     :key="route.is"
                     :label="route.meta.title">
                     <template v-for="child in route.children" >
                       <q-item v-if="!child.hidden"  :to="resolvePath(route.path,child.path)" :key="child.id" :item="child" class="q-ml-xl" style="margin-left: 55px  !important;" active-class="tab-active">
                         <q-item-section avatar v-if="!child.hidden">
-                          <q-icon name="date_range"/>
+                          <q-icon :name="child.meta.icon || 'menu_open'"/>
                         </q-item-section>
                         <q-item-section v-if="!child.hidden">
                           <q-item-label>{{child.name}}</q-item-label>

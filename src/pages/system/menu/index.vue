@@ -45,12 +45,12 @@
                             <q-item>
                                 <q-item-section>
                                     <q-item-label class="q-pb-xs">菜单图标</q-item-label>
-                                    <q-input dense outlined v-model="formData.icon" label="图标">
+                                    <q-input dense readonly outlined v-model="formData.icon" label="图标">
                                         <template v-slot:prepend>
                                             <q-icon :name="formData.icon" />
                                         </template>
                                         <template v-slot:append>
-                                            <q-icon name="art_track" @click="fixed1=!fixed1"/>
+                                            <q-btn label="选取图标" color="primary" @click="fixed1=!fixed1" flat class="q-ml-sm" />
                                         </template>
                                     </q-input>
                                 </q-item-section>
@@ -274,7 +274,7 @@ export default {
     filteredIcons () {
       let icons = this.iconsList
       if (icons) {
-        if (this.tags !== void 0 && this.tags !== '' && this.tags !== null && this.tags.length > 0) {
+        if (this.tags !== undefined && this.tags !== '' && this.tags !== null && this.tags.length > 0) {
           icons = icons.filter(icon => {
             const t = icon.tags.filter(tag => this.tags.includes(tag))
             if (t.length > 0) {
@@ -282,7 +282,7 @@ export default {
             }
           })
         }
-        if (this.filter !== void 0 && this.filter !== '' && this.filter !== null) {
+        if (this.filter !== undefined && this.filter !== '' && this.filter !== null) {
           icons = icons.filter(icon => icon.name.includes(this.filter))
         }
       }
@@ -350,7 +350,7 @@ export default {
       // }
     },
     'iconsList' (val) {
-      if (this.iconsList !== void 0 && this.iconsList.length > 0) {
+      if (this.iconsList !== undefined && this.iconsList.length > 0) {
         this.__updatePagination()
         this.$nextTick(() => {
           // whenever the icon set changes, it resets pagination page to page 1
@@ -421,7 +421,7 @@ export default {
       if (p.page < 1) {
         p.page = 1
       }
-      if (p.itemsPerPage === void 0 || p.itemsPerPage < 1) {
+      if (p.itemsPerPage === undefined || p.itemsPerPage < 1) {
         p.itemsPerPage = 0 // all
       }
       return p
@@ -452,7 +452,7 @@ export default {
     },
 
     __updatePagination () {
-      if (this.iconPagination !== void 0) {
+      if (this.iconPagination !== undefined) {
         this.__setPagination({ total: this.filteredIcons.length, totalPages: this.pagesNumber })
       }
     },
