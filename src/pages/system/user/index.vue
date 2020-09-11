@@ -8,7 +8,7 @@
         :data="data"
         :hide-header="mode === 'grid'"
         :columns="columns"
-        row-key="name"
+        row-key="index"
         :grid="mode=='grid'"
         :filter="filter"
         no-data-label="没有数据"
@@ -29,25 +29,27 @@
               </q-badge>
             </q-td>
             <q-td key="action" :props="props">
-              <q-btn color="primary" label="编辑"  @click="edit(props.row)" :disabled="props.row.id === 1"/>
-              <q-btn color="secondary" label="密码" @click="updatePassword(props.row)" :disabled="props.row.id === 1"/>
-              <q-btn color="red" label="删除" :disabled="props.row.id === 1">
-                <q-menu>
-                  <div class="row q-pa-md">
-                    确定删除本条数据吗？<br/>
-                    所有关联的数据将会被清除
-                  </div>
-                  <div class="row q-pa-md justify-end">
-                    <q-btn
-                      color="white"
-                      text-color="black"
-                      label="取消"
-                      push
-                      v-close-popup/>
-                    <q-btn color="primary" push label="确定" @click="subDelete(props.row.id)" v-close-popup/>
-                  </div>
-                </q-menu>
+              <div class="q-gutter-sm">
+                <q-btn dense color="primary" label="编辑"  @click="edit(props.row)" :disabled="props.row.id === 1"/>
+                <q-btn dense color="secondary" label="密码" @click="updatePassword(props.row)" :disabled="props.row.id === 1"/>
+                <q-btn dense color="red" label="删除" :disabled="props.row.id === 1">
+                  <q-menu>
+                    <div class="row q-pa-md">
+                      确定删除本条数据吗？<br/>
+                      所有关联的数据将会被清除
+                    </div>
+                    <div class="row q-pa-md justify-end">
+                      <q-btn
+                        color="white"
+                        text-color="black"
+                        label="取消"
+                        push
+                        v-close-popup/>
+                      <q-btn color="primary" push label="确定" @click="subDelete(props.row.id)" v-close-popup/>
+                    </div>
+                  </q-menu>
               </q-btn>
+              </div>
             </q-td>
           </q-tr>
         </template>

@@ -14,13 +14,17 @@
         <q-toolbar-title>
           NNMS
         </q-toolbar-title>
-        <q-btn round dense flat color="white" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-                 @click="$q.fullscreen.toggle()"
-                 v-if="$q.screen.gt.sm">
+        <q-btn round dense flat
+          color="white"
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+          @click="$q.fullscreen.toggle()"
+          v-if="$q.screen.gt.sm">
           </q-btn>
         <!-- <div>Quasar v{{ $q.version }}</div> -->
-        <q-btn class="q-mr-xs" flat round @click="$q.dark.toggle()"
-               :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
+        <q-btn class="q-mr-xs"
+          flat round
+          @click="$q.dark.toggle()"
+          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
         <!-- <a style="font-size: 25px;" class="float-right q-mr-sm" href="https://github.com/sponsors/mayank091193"
            target="_blank" title="Donate"><i class="fas fa-heart" style="color: #eb5daa"></i></a> -->
         <!-- <q-btn flat round dense icon="search" class="q-mr-xs"/> -->
