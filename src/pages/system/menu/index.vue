@@ -12,8 +12,8 @@
                         <q-tree :nodes="data" default-expand-all :selected.sync="selected" node-key="id">
                             <template v-slot:default-header="prop">
                                 <div class="row items-center">
-                                <q-icon :name="prop.node.icon || 'share'" color="primary" size="28px" class="q-mr-sm" />
-                                <div class="text-weight-bold text-primary">{{ prop.node.name }}</div>
+                                <q-icon :name="prop.node.icon || 'share'" size="28px" class="q-mr-sm" />
+                                <div>{{ prop.node.name }}</div>
                                 </div>
                             </template>
                         </q-tree>
@@ -37,8 +37,8 @@
                                             dense outlined
                                             v-model="formData.name"
                                             label='菜单名称'
-                                            :error="$v.formData.name.$invalid"
-                                            error-message="error"
+                                            :error="$v.formData.name.$error"
+                                            :error-message="getErroMsg('name')"
                                             @blur="$v.formData.name.$touch" />
                                 </q-item-section>
                             </q-item>
@@ -107,7 +107,7 @@
                     class="wd-80"
                     type="submit"
                     @click="doSubmit">保存</q-btn>
-                  <q-btn class="wd-80">重置</q-btn>
+                  <q-btn class="wd-80"  @click="resetForm">重置</q-btn>
                   <q-space />
                   <q-btn color="negative" class="wd-80" v-if="!isAdd" label="删除">
                     <q-menu :offset="[0,25]">
@@ -198,7 +198,7 @@ import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { add, edit, del, getMenuTree } from '@/api/menu'
 import { parseTime } from '@/utils/index'
-import { required, maxLength } from 'vuelidate/lib/validators'
+import { required, maxLength, minLength } from 'vuelidate/lib/validators'
 
 // import eHeader from './module/header'
 // import edit from './module/edit'
@@ -207,15 +207,9 @@ export default {
   mixins: [initData],
   data () {
     return {
-      columns: [
-        {
-          text: '名称',
-          value: 'name'
-        }
-      ],
       formData: {
-        id: 0,
-        pid: 0,
+        id: null,
+        pid: null,
         is_show: 'false',
         icon: '',
         name: '',
@@ -241,13 +235,10 @@ export default {
   },
   validations: {
     formData: {
-      label: {
-        required,
-        maxLength: maxLength(15)
-      },
       name: {
         required,
-        maxLength: maxLength(15)
+        minLength: minLength(2),
+        maxLength: maxLength(20)
       }
     }
   },
@@ -385,6 +376,13 @@ export default {
       if (value) { this.params.search = value }
       return true
     },
+    getErroMsg (field) {
+      if (field === 'name') {
+        if (!this.$v.formData.name.required) return '请输入菜单名称'
+        if (!this.$v.formData.name.minLength) return '菜单名不能小于2位'
+        if (!this.$v.formData.name.maxLength) return '菜单名不能大于20位'
+      }
+    },
     getMenus () {
       getMenuTree().then(res => {
         this.menus = res.detail
@@ -481,10 +479,14 @@ export default {
       this.iconSelected = null
     },
     doSubmit () {
-      this.loading = true
-      if (this.isAdd) {
-        this.doAdd()
-      } else this.doEdit()
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        return false
+      } else {
+        if (this.isAdd) {
+          this.doAdd()
+        } else this.doEdit()
+      }
     },
     doAdd () {
       add(this.formData).then(res => {
@@ -521,7 +523,7 @@ export default {
       })
     },
     resetForm () {
-      this.dialog = false
+      this.isAdd = true
       this.formData = { name: '', sort: 999, path: '', component: '', is_show: 'true', is_frame: 'false', pid: null, icon: '' }
     },
     findMenuById (id) {

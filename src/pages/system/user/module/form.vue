@@ -18,7 +18,7 @@
                 v-model="formData.username"
                 label="用户名"
                 :error-message="getErroMsg('username')"
-                :error="$v.formData.username.$invalid"/>
+                :error="$v.formData.username.$error"/>
               </q-item-section>
             </q-item>
             <q-item>
@@ -28,7 +28,7 @@
                 v-model="formData.name"
                 label="姓名"
                 :error-message="getErroMsg('name')"
-                :error="$v.formData.name.$invalid"/>
+                :error="$v.formData.name.$error"/>
               </q-item-section>
             </q-item>
             <q-item>
@@ -36,7 +36,7 @@
                 <q-item-label class="q-pb-xs">邮箱</q-item-label>
                 <q-input dense outlined v-model="formData.email" label="邮箱"
                 :error-message="getErroMsg('email')"
-                :error="$v.formData.email.$invalid"/>
+                :error="$v.formData.email.$error"/>
               </q-item-section>
             </q-item>
             <q-item>
@@ -44,7 +44,7 @@
                 <q-item-label class="q-pb-xs">手机</q-item-label>
                 <q-input dense outlined v-model="formData.mobile" label="手机"
                 :error-message="getErroMsg('mobile')"
-                :error="$v.formData.mobile.$invalid"/>
+                :error="$v.formData.mobile.$error"/>
               </q-item-section>
             </q-item>
             <q-item>
