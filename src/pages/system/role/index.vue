@@ -1,9 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
+    <eForm ref="form" :isAdd="true" :sup_this="sup_this"/>
     <div class="row">
       <div class="col shadow-6 padding-10">
-        <eForm ref="form" :isAdd="true" :sup_this="sup_this"/>
-        <updatePass ref="updatePass" :sup_this="sup_this"/>
         <q-card>
           <q-table
             :title="this.$route.meta.title"
@@ -20,7 +19,6 @@
                 <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                 <q-td key="action" :props="props">
                   <q-btn dense color="primary" label="编辑"  @click="edit(props.row)" :disabled="props.row.id === 1"/>
-                  <q-btn dense color="secondary" label="密码" @click="updatePassword(props.row)" :disabled="props.row.id === 1"/>
                   <q-btn dense color="red" label="删除" :disabled="props.row.id === 1">
                     <q-menu>
                       <div class="row q-pa-md">
@@ -121,7 +119,7 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import { del, save, retrieve } from '@/api/role'
+import { del, save } from '@/api/role'
 import { getMenuTree } from '@/api/menu'
 import { getPermissionTree } from '@/api/permission'
 
@@ -130,11 +128,8 @@ import { parseTime } from '@/utils/index'
 import eHeader from './module/header'
 import eForm from './module/form'
 
-// import edit from './module/edit'
-import updatePass from './module/updatePass'
-
 export default {
-  components: { eHeader, eForm, updatePass },
+  components: { eHeader, eForm },
   mixins: [initData],
   data () {
     return {
@@ -214,31 +209,9 @@ export default {
     edit (row) {
       this.$refs.form.resetForm()
       const formData = JSON.parse(JSON.stringify(row))
-      let did = null
-      if (formData.department !== null) {
-        did = formData.department.id
-      }
-      let uid = null
-      if (formData.superior !== null) {
-        uid = formData.superior.id
-      }
-      formData.department = did
-      formData.superior = uid
-      formData.is_active = formData.is_active.toString()
-
-      const roleIds = []
-      row.roles.forEach(function (data, index) {
-        roleIds.push(data.id)
-      })
-      delete formData.image
       this.$refs.form.isAdd = false
-      this.$refs.form.roleIds = roleIds
       this.$refs.form.formData = formData
       this.$refs.form.dialog = true
-    },
-    updatePassword (row) {
-      this.$refs.updatePass.id = row.id
-      this.$refs.updatePass.dialog = true
     },
     getMenus () {
       if (Array.isArray(this.menu_list) && this.menu_list.length === 0) {

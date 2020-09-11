@@ -29,13 +29,6 @@ export default {
   },
   data () {
     return {
-      orgusers: [],
-      downloadLoading: false,
-      mode1: this.listMode,
-      enabledTypeOptions: [
-        { key: 'true', display_name: '激活' },
-        { key: 'false', display_name: '锁定' }
-      ]
     }
   },
   methods: {
@@ -50,15 +43,10 @@ export default {
       })
     },
     toAdd () {
+      console.log(this.sup_this)
       this.sup_this.$refs.form.resetForm()
       this.sup_this.$refs.form.isAdd = true
       this.sup_this.$refs.form.dialog = true
-    },
-    exportTable () {
-      this.$emit('exportTable')
-    },
-    changeMode () {
-      this.$emit('changeMode')
     }
   }
 }
