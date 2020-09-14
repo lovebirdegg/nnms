@@ -23,12 +23,134 @@
         <!-- <div>Quasar v{{ $q.version }}</div> -->
         <q-btn class="q-mr-xs"
           flat round
+          icon="notifications">
+          <q-badge color="orange" floating>{{unReadCount}}</q-badge>
+          <q-menu
+            fit
+            anchor="bottom left"
+            self="top middle"
+            :offset="[93, 0]"
+            @show="scrollTarget = $refs.scrollTargetRef"
+          >
+            <q-item-label header>
+              我的消息
+            </q-item-label>
+            <q-list
+              ref="scrollTargetRef"
+              class="scroll"
+              style="max-height: 250px; width:300px;"
+            >
+              <!-- <q-infinite-scroll
+                @load="onLoadMenu"
+                :offset="250"
+                :scroll-target="scrollTarget"
+              > -->
+
+                <q-item
+                  clickable
+                  v-ripple
+                  v-for="(item, index) in notices"
+                  @click="markAsRead(item.id)"
+                  :key="index"
+                >
+                  <q-item-section avatar  >
+                    <q-avatar
+                      color="primary"
+                      text-color="white"
+                    >
+                      R{{ index + 1 }}
+                    </q-avatar>
+                  </q-item-section>
+
+                  <q-item-section >
+                    <q-item-label>{{ item.actor.name }}</q-item-label>
+                    <q-item-label
+                      caption
+                      lines="1"
+                    >{{ item.verb }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side >
+                    <q-icon
+                      name="chat_bubble"
+                      color="green"
+                    />
+                  </q-item-section>
+                </q-item>
+
+                <!-- <template v-slot:loading>
+                  <div class="text-center q-my-md">
+                    <q-spinner-dots
+                      color="primary"
+                      size="40px"
+                    />
+                  </div>
+                </template> -->
+              <!-- </q-infinite-scroll> -->
+            </q-list>
+          </q-menu>
+        </q-btn>
+        <q-btn class="q-mr-xs"
+          flat round
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
         <!-- <a style="font-size: 25px;" class="float-right q-mr-sm" href="https://github.com/sponsors/mayank091193"
            target="_blank" title="Donate"><i class="fas fa-heart" style="color: #eb5daa"></i></a> -->
         <!-- <q-btn flat round dense icon="search" class="q-mr-xs"/> -->
-        <q-btn flat round dense icon="exit_to_app" @click="logout()"/>
+         <q-btn-dropdown
+          flat
+          no-caps
+          stretch
+          auto-close
+        >
+          <template v-slot:label>
+            <q-avatar size="26px">
+              <q-img src="images/user1.jpg"></q-img>
+            </q-avatar>
+          </template>
+          <div class="row no-wrap q-pa-md">
+            <div
+              class="column"
+              style="min-width: 200px;"
+            >
+              <div class="text-h6 q-mb-md">Settings</div>
+              <!-- <q-toggle
+                dense
+                v-model="mobileData"
+                label="Use Mobile Data"
+              />
+              <q-toggle
+                dense
+                v-model="bluetooth"
+                label="Bluetooth"
+                class="q-mt-md"
+              /> -->
+              <div class="q-mt-md">
+                <!-- <q-brand-color /> -->
+              </div>
+            </div>
+
+            <q-separator
+              vertical
+              inset
+              class="q-mx-lg"
+            />
+            <div class="column items-center">
+              <q-avatar size="72px">
+                <q-img src="images/user1.jpg"></q-img>
+              </q-avatar>
+              <div class="text-subtitle1 q-mt-md q-mb-xs">{{'John Doe'}}</div>
+              <q-btn
+                color="primary"
+                label="Logout"
+                push
+                size="sm"
+                v-close-popup
+                @click="logout"
+              />
+            </div>
+          </div>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
@@ -104,7 +226,6 @@
                         </q-item-section>
                       </q-item>
                     </template>
-
                   </q-expansion-item>
                 </div>
               </div>
@@ -124,6 +245,8 @@
 // import EssentialLink from 'components/EssentialLink.vue'
 import { mapGetters } from 'vuex'
 import { isExternal } from '@/utils'
+import { getNoticeList, getNoticeCount, markAsRead } from '@/api/notice'
+
 import path from 'path'
 import TagsView from './components/TagsView'
 
@@ -147,11 +270,18 @@ export default {
   },
   created () {
     console.log(this.permission_routers)
+    this.getNotices(1)
+    this.getNoticeCount()
   },
   data () {
     return {
       leftDrawerOpen: false,
-      onlyOneChild: null
+      onlyOneChild: null,
+      scrollTarget: null,
+      itemsMenu: [{}, {}, {}, {}, {}, {}, {}],
+      notices: [],
+      unReadCount: 0,
+      current_notice: { id: null }
     }
   },
   methods: {
@@ -192,6 +322,39 @@ export default {
     },
     isExternalLink (routePath) {
       return isExternal(routePath)
+    },
+    onLoadMenu (index, done) {
+      if (index > 1) {
+        setTimeout(() => {
+          if (this.itemsMenu) {
+            this.itemsMenu.push({}, {}, {}, {}, {}, {}, {})
+            done()
+          }
+        }, 2000)
+      } else {
+        setTimeout(() => {
+          done()
+        }, 200)
+      }
+    },
+    getNotices  () {
+      getNoticeList(1).then(res => {
+        this.notices = res.results
+      })
+    },
+    getNoticeCount  () {
+      getNoticeCount().then(res => {
+        this.unReadCount = res.unread_count
+      })
+    },
+    markAsRead (id) {
+      this.current_notice.id = id
+      markAsRead(this.current_notice).then(res => {
+        this.getNotices(1)
+        this.getNoticeCount()
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
