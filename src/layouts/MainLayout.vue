@@ -12,14 +12,24 @@
         />
 
         <q-toolbar-title>
-          NNMS
+          <div class="q-pa-md q-gutter-sm">
+            <q-breadcrumbs active-color="white">
+              <q-breadcrumbs-el
+                v-for="item in levelList"
+                :label="item.meta.title"
+                :to="handleLink(item)"
+                :key="item.path">
+
+              </q-breadcrumbs-el>
+            </q-breadcrumbs>
+          </div>
         </q-toolbar-title>
         <q-btn round dense flat
           color="white"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
           @click="$q.fullscreen.toggle()"
           v-if="$q.screen.gt.sm">
-          </q-btn>
+        </q-btn>
         <!-- <div>Quasar v{{ $q.version }}</div> -->
         <q-btn class="q-mr-xs"
           flat round
@@ -94,7 +104,7 @@
           flat round
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
-         <q-btn-dropdown
+        <q-btn-dropdown
           flat
           no-caps
           stretch
@@ -144,7 +154,6 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      content-class="bg-grey-1"
     >
       <div class="full-height" :class="$q.dark.isActive?'drawer_dark':'drawer_normal'">
         <div style="height: calc(100% - 117px);padding:10px;">
@@ -152,7 +161,7 @@
             <q-avatar>
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
-            <q-toolbar-title>Mayank Patel</q-toolbar-title>
+            <q-toolbar-title>NNMS</q-toolbar-title>
           </q-toolbar>
           <hr/>
           <q-scroll-area style="height:100%;">
@@ -223,7 +232,6 @@
 import { mapGetters } from 'vuex'
 import { isExternal } from '@/utils'
 import { getNoticeList, getNoticeCount, markAsRead } from '@/api/notice'
-
 import path from 'path'
 import TagsView from './components/TagsView'
 import BrandColor from './BrandColor'
@@ -246,10 +254,16 @@ export default {
       return !this.sidebar.opened
     }
   },
+  watch: {
+    $route () {
+      this.getBreadcrumb()
+    }
+  },
   created () {
     console.log(this.permission_routers)
     this.getNotices(1)
     this.getNoticeCount()
+    this.getBreadcrumb()
   },
   data () {
     return {
@@ -259,7 +273,8 @@ export default {
       itemsMenu: [{}, {}, {}, {}, {}, {}, {}],
       notices: [],
       unReadCount: 0,
-      current_notice: { id: null }
+      current_notice: { id: null },
+      levelList: null
     }
   },
   methods: {
@@ -333,6 +348,28 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    getBreadcrumb () {
+      let matched = this.$route.matched.filter(item => {
+        if (item.name) {
+          return true
+        }
+      })
+      const first = matched[0]
+      if (first && first.name !== '首页') {
+        matched = [{ path: '/index', meta: { title: '首页' } }].concat(matched)
+      }
+      this.levelList = matched
+    },
+    handleLink (item) {
+      console.log('handleLink')
+      const { redirect, path } = item
+      console.log(item)
+      if (redirect) {
+        // this.$router.push(redirect)
+        return null
+      }
+      return path
     }
   }
 }
@@ -361,7 +398,7 @@ export default {
   }
 
   body {
-    background: #f1f1f1 !important;
+    /* background: #f1f1f1 !important; */
   }
 
   .header_normal {

@@ -75,6 +75,9 @@ export default {
     moveToCurrentTag () {
       const tags = this.$refs.tag
       this.$nextTick(() => {
+        if (!tags) {
+          return
+        }
         for (const tag of tags) {
           if (tag.to.path === this.$route.path) {
             this.$refs.scrollPane.moveToTarget(tag)
@@ -173,9 +176,11 @@ export default {
         margin-right: 15px;
       }
       &.active {
-        background-color: #42b983;
+        background-color:$primary;
+        background-color: var(--q-color-primary);
         color: #fff;
-        border-color: #42b983;
+        border-color: $primary;
+        border-color: var(--q-color-primary)
         &::before {
           content: '';
           background: #fff;
