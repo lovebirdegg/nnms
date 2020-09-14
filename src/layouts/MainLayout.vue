@@ -94,9 +94,6 @@
           flat round
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
-        <!-- <a style="font-size: 25px;" class="float-right q-mr-sm" href="https://github.com/sponsors/mayank091193"
-           target="_blank" title="Donate"><i class="fas fa-heart" style="color: #eb5daa"></i></a> -->
-        <!-- <q-btn flat round dense icon="search" class="q-mr-xs"/> -->
          <q-btn-dropdown
           flat
           no-caps
@@ -114,19 +111,8 @@
               style="min-width: 200px;"
             >
               <div class="text-h6 q-mb-md">Settings</div>
-              <!-- <q-toggle
-                dense
-                v-model="mobileData"
-                label="Use Mobile Data"
-              />
-              <q-toggle
-                dense
-                v-model="bluetooth"
-                label="Bluetooth"
-                class="q-mt-md"
-              /> -->
               <div class="q-mt-md">
-                <!-- <q-brand-color /> -->
+                <brand-color />
               </div>
             </div>
 
@@ -193,7 +179,7 @@
               <q-item active-class="tab-active" to="/dashboard_v4"  class="q-ma-sm navigation-item" clickable
                       v-ripple>
                 <q-item-section avatar>
-                  <q-icon name="dashboard"/>
+                  <q-icon name="dashboard" color="primary"/>
                 </q-item-section>
                 <q-item-section>
                   Dashboard v4
@@ -201,25 +187,16 @@
               </q-item>
               <div v-for="route in permission_routers" :key="route.id" :item="route">
                 <div v-if="!route.hidden&&route.children">
-                  <!-- <template v-if="hasOneShowingChild(route.children,route) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!route.alwaysShow" class="q-ma-sm navigation-item" :to="resolvePath(route.path,onlyOneChild.path)">
-                    <q-item  exact active-class="q-item-no-link-highlighting" :key="onlyOneChild.name">
-                      <q-item-section avatar>
-                        <q-icon name="date_range"/>
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{route.name}}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    </template> -->
                   <q-expansion-item
                     v-if="route.meta"
                     :icon="route.meta.icon || 'menu_open'"
                     :key="route.is"
+                    class="app-menu"
                     :label="route.meta.title">
                     <template v-for="child in route.children" >
-                      <q-item v-if="!child.hidden"  :to="resolvePath(route.path,child.path)" :key="child.id" :item="child" class="q-ml-xl" style="margin-left: 55px  !important;" active-class="tab-active">
+                      <q-item v-if="!child.hidden"  :to="resolvePath(route.path,child.path)" :key="child.id" :item="child" class="q-ml-xl"  >
                         <q-item-section avatar v-if="!child.hidden">
-                          <q-icon :name="child.meta.icon || 'menu_open'"/>
+                          <q-icon :name="child.meta.icon || 'menu_open'" color="primary"/>
                         </q-item-section>
                         <q-item-section v-if="!child.hidden">
                           <q-item-label>{{child.name}}</q-item-label>
@@ -249,10 +226,11 @@ import { getNoticeList, getNoticeCount, markAsRead } from '@/api/notice'
 
 import path from 'path'
 import TagsView from './components/TagsView'
+import BrandColor from './BrandColor'
 
 export default {
   name: 'MainLayout',
-  components: { TagsView },
+  components: { TagsView, BrandColor },
   props: {
     basePath: {
       type: String,
@@ -367,11 +345,11 @@ export default {
   }
 
   .drawer_normal {
-    background-color: rgba(1, 1, 1, 0.75);
+    /* background-color: rgba(1, 1, 1, 0.75); */
   }
 
   .drawer_dark {
-    background-color: #010101f2;
+    /* background-color: #010101f2; */
   }
 
   .navigation-item {
@@ -387,10 +365,46 @@ export default {
   }
 
   .header_normal {
-    background: linear-gradient(145deg, rgb(32, 106, 80) 15%, rgb(21, 57, 102) 70%);
+    /* background: linear-gradient(145deg, rgb(32, 106, 80) 15%, rgb(21, 57, 102) 70%); */
   }
 
   .header_dark {
-    background: linear-gradient(145deg, rgb(61, 14, 42) 15%, rgb(14, 43, 78) 70%);
+    /* background: linear-gradient(145deg, rgb(61, 14, 42) 15%, rgb(14, 43, 78) 70%); */
   }
+</style>
+<style lang="sass">
+.app-menu
+  .q-item__section--avatar
+    color: $primary
+    color: var(--q-color-primary)
+    min-width: 2px
+
+  .q-item__section--side
+    padding-right: 10px
+    & > .q-icon
+      font-size: 19px
+
+  .q-expansion-item--expanded > div > .q-item > .q-item__section--main
+    color: $primary
+    color: var(--q-color-primary)
+    font-weight: 400
+
+  .q-expansion-item__content .q-item
+    border-radius: 0
+    margin-right: 0
+    &--dense
+      min-height: 38px
+
+  .q-item
+    &.q-router-link--active
+      background: scale-color($primary, $lightness: 90%)
+
+  &.minimize
+    & .q-item__section--main,.q-item__section--side
+      display: none
+    & .q-item__section--avatar
+      display: inherit
+    .q-expansion-item__content .q-item
+      border-radius: 0
+      margin: 0
 </style>
