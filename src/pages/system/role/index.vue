@@ -13,7 +13,7 @@
             no-data-label="没有数据"
             :pagination.sync="pagination"
             @request="init"
-          >
+            style="height: 580px;">
             <template v-slot:body="props">
               <q-tr :props="props" @click="handleCurrentChange(props.row)">
                 <q-td key="name" :props="props">{{ props.row.name }}</q-td>
@@ -49,7 +49,7 @@
           </q-table>
         </q-card>
       </div>
-      <div class="col shadow-6 padding-10">
+      <div class="col shadow-6 padding-10" style="margin-left:10px">
         <q-card inline class="fit">
           <q-card-section>
             <div class = "row">
@@ -57,7 +57,7 @@
                 菜单分配-{{row_data ? row_data.name : ""}}
               </div>
               <div class="column items-end">
-                <q-btn color="secondary" size="md" icon-right="done" label="保存" @click="is_permissions=false;toSave()"/>
+                <q-btn v-if="this.row_data" color="secondary" size="md" icon-right="done" label="保存" @click="is_permissions=false;toSave()"/>
               </div>
             </div>
           </q-card-section>
@@ -80,7 +80,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col shadow-6 padding-10">
+      <div class="col shadow-6 padding-10" style="margin-left:10px">
         <q-card inline class="fit">
           <q-card-section>
             <div class = "row">
@@ -88,7 +88,7 @@
                 权限分配-{{row_data ? row_data.name : ""}}
               </div>
               <div class="column items-end">
-                <q-btn color="secondary" size="md" icon-right="done" label="保存"  @click="is_permissions=true; toSave()"/>
+                <q-btn  v-if="this.row_data" color="secondary" size="md" icon-right="done" label="保存"  @click="is_permissions=true; toSave()"/>
               </div>
             </div>
           </q-card-section>
@@ -247,7 +247,7 @@ export default {
         }
       } else {
         this.$q.notify({
-          message: '添加成功!默认管理员不可修改!',
+          message: '默认管理员不可修改!',
           color: 'red'
         })
       }

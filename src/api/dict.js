@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 
 // 获取所有的字典树
-export function getDictTree() {
+export function getDictTree () {
   return request({
     url: 'api/dict/tree/',
     method: 'get'
   })
 }
 
-export function add(data) {
+export function add (data) {
   return request({
     url: 'api/dicts/',
     method: 'post',
@@ -16,14 +16,14 @@ export function add(data) {
   })
 }
 
-export function del(id) {
+export function del (id) {
   return request({
     url: 'api/dicts/' + id + '/',
     method: 'delete'
   })
 }
 
-export function edit(id, data) {
+export function edit (id, data) {
   return request({
     url: 'api/dicts/' + id + '/',
     method: 'put',
@@ -31,7 +31,7 @@ export function edit(id, data) {
   })
 }
 
-export function getKey(...key) {
+export function getKey (...key) {
   return request({
     url: 'api/dicts/?&key=' + key,
     method: 'get'
