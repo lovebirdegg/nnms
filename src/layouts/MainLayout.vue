@@ -183,6 +183,15 @@
                   Dashboard
                 </q-item-section>
               </q-item>
+              <q-item class="app-menu" to="/cal" exact clickable
+                      v-ripple>
+                <q-item-section avatar>
+                  <q-icon name="dashboard"/>
+                </q-item-section>
+                <q-item-section>
+                  日历
+                </q-item-section>
+              </q-item>
               <div v-for="route in permission_routers" :key="route.id" :item="route">
                 <div v-if="!route.hidden&&route.children">
                   <q-expansion-item

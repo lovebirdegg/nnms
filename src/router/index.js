@@ -25,7 +25,8 @@ export const constantRouterMap = [
         component: () => import('pages/dashboard_v2.vue')
       },
       { path: '/dashboard_v3', component: () => import('pages/dashboard_v3.vue'), name: '控制台3' },
-      { path: '/dashboard_v4', component: () => import('pages/dashboard_v4.vue'), name: '控制台4' }
+      { path: '/dashboard_v4', component: () => import('pages/dashboard_v4.vue'), name: '控制台4' },
+      { path: '/cal', component: () => import('pages/calendar.vue'), name: '日历' }
       // { path: '/customer_management', component: () => import('pages/customer_management.vue') },
       // { path: '/change_request', component: () => import('pages/change_request.vue') },
       // { path: '/my_profile', component: () => import('pages/my_profile.vue') },
