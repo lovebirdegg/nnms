@@ -13,7 +13,7 @@
 
         <q-toolbar-title>
           <div class="q-pa-md q-gutter-sm">
-            <q-breadcrumbs active-color="white">
+            <q-breadcrumbs active-color="white" style="font-size: 11px">
               <q-breadcrumbs-el
                 v-for="item in levelList"
                 :label="item.meta.title"
@@ -186,7 +186,7 @@
               <q-item class="app-menu" to="/cal" exact clickable
                       v-ripple>
                 <q-item-section avatar>
-                  <q-icon name="dashboard"/>
+                  <q-icon name="date_range"/>
                 </q-item-section>
                 <q-item-section>
                   日历

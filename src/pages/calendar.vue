@@ -1,8 +1,15 @@
 <template>
   <q-page class="q-pa-sm bg-white">
+     <q-toolbar>
+      <q-btn flat dense label="Today" color="primary" @click="setToday()"></q-btn>
+      <q-btn flat dense round icon="keyboard_arrow_left" color="primary" @click="onPrev()"></q-btn>
+      <q-btn flat dense round icon="keyboard_arrow_right" color="primary" @click="onNext"></q-btn>
+      <span class="q-mr-xl text-black q-toolbar__title nowrap">{{ title() }}</span>
+    </q-toolbar>
     <q-calendar
       v-model="selectedDate"
       view="month"
+      ref="calendar"
       locale="en-us"
       :day-height="100"
     >
@@ -43,7 +50,9 @@ export default {
   name: 'Calendar',
   data () {
     return {
-      selectedDate: '',
+      selectedDate: (new Date()).getFullYear() + '-' + ((new Date()).getMonth() + 1) + '-' + (new Date()).getDate(),
+      titleFormatter: null,
+      dateFormatter: null,
       events: [
         {
           title: '1st of the Month',
@@ -110,7 +119,49 @@ export default {
       ]
     }
   },
+  created () {
+    this.updateFormatters()
+  },
   methods: {
+    onPrev () {
+      this.$refs.calendar.prev()
+    },
+    onNext () {
+      this.$refs.calendar.next()
+    },
+    setToday () {
+      this.selectedDate = (new Date()).getFullYear() + '-' + ((new Date()).getMonth() + 1) + '-' + (new Date()).getDate()
+    },
+    title () {
+      if (this.selectedDate) {
+        const date = new Date(this.selectedDate)
+        return this.titleFormatter.format(date)
+      }
+      return ''
+    },
+    updateFormatters () {
+      try {
+        this.dateFormatter = new Intl.DateTimeFormat(undefined, {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+          timeZone: 'UTC'
+        })
+        this.titleFormatter = new Intl.DateTimeFormat(undefined, {
+          month: this.shortMonthLabel ? 'short' : 'long',
+          year: 'numeric',
+          timeZone: 'UTC'
+        })
+      } catch (e) {
+        // console.error('Intl.DateTimeFormat not supported')
+        this.dateFormatter = undefined
+        this.titleFormatter = undefined
+      }
+    },
     isCssColor (color) {
       return !!color && !!color.match(/^(#|(rgb|hsl)a?\()/)
     },
