@@ -16,7 +16,7 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     // 已登录且要跳转的页面是登录页
     if (to.path === '/login') {
-      next({ path: '/' })
+      next({ path: '/index' })
       // NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息

@@ -19,7 +19,6 @@
                 :label="item.meta.title"
                 :to="handleLink(item)"
                 :key="item.path">
-
               </q-breadcrumbs-el>
             </q-breadcrumbs>
           </div>
@@ -166,32 +165,22 @@
           <hr/>
           <q-scroll-area style="height:100%;">
             <q-list padding>
-              <q-item active-class="tab-active" to="/dashboard_v3" exact class="q-ma-sm navigation-item" clickable
+              <q-item class="app-menu" to="/index" exact clickable
+                      v-ripple>
+                <q-item-section avatar>
+                  <q-icon name="home"/>
+                </q-item-section>
+                <q-item-section>
+                  首页
+                </q-item-section>
+              </q-item>
+              <q-item class="app-menu" to="/dashboard_v3" exact clickable
                       v-ripple>
                 <q-item-section avatar>
                   <q-icon name="dashboard"/>
                 </q-item-section>
                 <q-item-section>
-                  Dashboard v3
-                </q-item-section>
-              </q-item>
-              <q-item active-class="tab-active" to="/dashboard_v2"  class="q-ma-sm navigation-item" clickable
-                      v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="dashboard"/>
-                </q-item-section>
-
-                <q-item-section>
-                  Dashboard v2
-                </q-item-section>
-              </q-item>
-              <q-item active-class="tab-active" to="/dashboard_v4"  class="q-ma-sm navigation-item" clickable
-                      v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="dashboard" color="primary"/>
-                </q-item-section>
-                <q-item-section>
-                  Dashboard v4
+                  Dashboard
                 </q-item-section>
               </q-item>
               <div v-for="route in permission_routers" :key="route.id" :item="route">
